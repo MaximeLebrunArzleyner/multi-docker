@@ -14,3 +14,10 @@ after_success:
   - docker build -t arzleyner/multi-nginx ./nginx
   - docker build -t arzleyner/multi-server ./server
   - docker build -t arzleyner/multi-worker ./worker
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  - docker push arzleyner/multi-client
+  - docker push arzleyner/multi-nginx
+  - docker push arzleyner/multi-server
+  - docker push arzleyner/multi-worker
