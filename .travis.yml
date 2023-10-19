@@ -1,5 +1,6 @@
 sudo: required
-language: generic 
+language: generic
+
 services:
   - docker
 
@@ -14,10 +15,22 @@ after_success:
   - docker build -t arzleyner/multi-nginx ./nginx
   - docker build -t arzleyner/multi-server ./server
   - docker build -t arzleyner/multi-worker ./worker
-
+  # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-
+  # Take those images and push them to docker hub
   - docker push arzleyner/multi-client
   - docker push arzleyner/multi-nginx
   - docker push arzleyner/multi-server
   - docker push arzleyner/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'eu-west-3'
+  app: 'multi-docker'
+  env: 'MultiDocker-env'
+  bucket_name: 'elasticbeanstalk-eu-west-3-525826835501'
+  bucket_path: 'docker-multi'
+  on:
+    branch: main
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
